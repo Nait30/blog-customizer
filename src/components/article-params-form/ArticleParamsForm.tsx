@@ -9,12 +9,14 @@ import {
 	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
 } from 'src/constants/articleProps';
-import classNames from 'classnames';
 import { useOutsideClickClose } from './hooks/useOutsideClickClose';
+import { Text } from '../text/Text';
+import clsx from 'clsx';
 
 type ArticleProps = {
 	options: ArticleStateType;
@@ -33,7 +35,7 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 		submit,
 	} = props;
 
-	const [isOpen, setIsOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const [selectedFont, setSelectedFont] = useState(fontFamilyOption);
 	const [selectedFontSize, setSelectedFontSize] = useState(fontSizeOption);
@@ -43,21 +45,21 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 	const [selectcontentWidth, setSelectedContentWidth] = useState(contentWidth);
 
 	const outsideClickCloser = useOutsideClickClose(() => {
-		setIsOpen(false);
-	});
+		setIsMenuOpen(false);
+	}, isMenuOpen);
 
 	const handleReset = () => {
-		setSelectedFont(fontFamilyOptions[0]);
-		setSelectedFontSize(fontSizeOptions[0]);
-		setSelectedFontColor(fontColors[0]);
-		setSelectedBagroundColor(backgroundColors[0]);
-		setSelectedContentWidth(contentWidthArr[0]);
+		setSelectedFont(defaultArticleState.fontFamilyOption);
+		setSelectedFontSize(defaultArticleState.fontSizeOption);
+		setSelectedFontColor(defaultArticleState.fontColor);
+		setSelectedBagroundColor(defaultArticleState.backgroundColor);
+		setSelectedContentWidth(defaultArticleState.contentWidth);
 		submit({
-			fontFamilyOption: fontFamilyOptions[0],
-			fontColor: fontColors[0],
-			backgroundColor: backgroundColors[0],
-			contentWidth: contentWidthArr[0],
-			fontSizeOption: backgroundColors[0],
+			fontFamilyOption: defaultArticleState.fontFamilyOption,
+			fontColor: defaultArticleState.fontColor,
+			backgroundColor: defaultArticleState.backgroundColor,
+			contentWidth: defaultArticleState.contentWidth,
+			fontSizeOption: defaultArticleState.fontSizeOption,
 		});
 	};
 
@@ -73,22 +75,23 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 	};
 
 	const handleClickOpen = () => {
-		setIsOpen(!isOpen);
+		setIsMenuOpen(!isMenuOpen);
 	};
 
 	return (
 		<>
-			<ArrowButton onClick={handleClickOpen} isOpen={isOpen} />
+			<ArrowButton onClick={handleClickOpen} isOpen={isMenuOpen} />
 			<aside
-				className={classNames(
-					styles.container,
-					isOpen && styles.containerOpen
-				)}>
+				className={clsx(styles.container, {
+					[styles.containerOpen]: isMenuOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
 					ref={outsideClickCloser}>
-					<h2 className={styles.heading}>Задайте параметры</h2>
+					<Text as={'h2'} weight={800} size={31} family='open-sans' uppercase>
+						Задайте параметры
+					</Text>
 					<Select
 						title='Шрифт'
 						options={fontFamilyOptions}

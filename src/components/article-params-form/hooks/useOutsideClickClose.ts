@@ -1,9 +1,13 @@
 import { RefObject, useEffect, useRef } from 'react';
 
-export function useOutsideClickClose(onOutsideClick: () => void) {
+export function useOutsideClickClose(
+	onOutsideClick: () => void,
+	isOpen: boolean
+) {
 	const ref = useRef() as RefObject<HTMLFormElement>;
 
 	useEffect(() => {
+		if (!isOpen) return;
 		function handleClick(event: MouseEvent) {
 			const { target } = event;
 			if (
